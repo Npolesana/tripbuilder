@@ -258,7 +258,7 @@ class ApiController extends Controller
         }
         if ($request->input('per_page_outbound'))
         {
-            list($perPageOutbound, $offsetOutbound, $limitOutbound, $pageOutbound) = $this->getPaginationInbound($request);
+            list($perPageOutbound, $offsetOutbound, $limitOutbound, $pageOutbound) = $this->getPaginationOutbound($request);
             $this->pagination_outbound = ['per_page_outbound' => $perPageOutbound,
                 'offset_inbound' => $offsetOutbound,
                 'limit_outbound' => $limitOutbound,
@@ -484,7 +484,7 @@ class ApiController extends Controller
 
 
         if ($request->filled('allow_nearby_airports')) {
-            $query = $this->applyNearbyAirportsFilters($query, $request, 'return_airport_departure', 'return_airport_arrival');
+            $query = $this->applyNearbyAirportsFilters($query, $request, 'return_airport_departure', 'return_airport_arrival', true);
         } else {
             $query->where('return_airport_arrival.code', $request->input('departure_from'))
                 ->where('return_airport_departure.code', $request->input('arrival_to'));
@@ -507,10 +507,10 @@ class ApiController extends Controller
      * @param string $arrivalAirportAlias
      * @return Builder
      */
-    private function applyNearbyAirportsFilters(Builder $query, Request $request, string $departureAirportAlias, string $arrivalAirportAlias): Builder
+    private function applyNearbyAirportsFilters(Builder $query, Request $request, string $departureAirportAlias, string $arrivalAirportAlias, bool $inbound = false): Builder
     {
-        $departureAirport = Airport::where('code', $request->input('departure_from'))->first();
-        $arrivalAirport = Airport::where('code', $request->input('arrival_to'))->first();
+        $departureAirport = Airport::where('code', $inbound ? $request->input('arrival_to') : $request->input('departure_from'))->first();
+        $arrivalAirport = Airport::where('code', $inbound ? $request->input('departure_from') : $request->input('arrival_to'))->first();
 
         $query->whereBetween($departureAirportAlias . '.latitude', [$departureAirport->latitude - 1, $departureAirport->latitude + 1])
             ->whereBetween($departureAirportAlias . '.longitude', [$departureAirport->longitude - 1, $departureAirport->longitude + 1])
