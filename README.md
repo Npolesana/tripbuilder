@@ -10,7 +10,7 @@ External libraries used:
 
 Documentation is hosted at https://app.apiary.io/flights22
 
-The API endpoints are hosted at https://polesana.it/api/v1
+The API endpoints are hosted at https://www.polesana.it/api/v1
 
 The whole project can be tested at the above address endpoints.
 
