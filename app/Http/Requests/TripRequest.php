@@ -26,7 +26,7 @@ class TripRequest extends FormRequest
                     'departure_from' => 'required|exists:airports,code',
                     'departure_date' => 'required|date_format:Y-m-d|after:today|before:1 year',
                     'arrival_to' => 'required|exists:airports,code',
-                    'return_date' => 'required_without:one_way|required_if:one_way,false',
+                    'return_date' => 'required_without:one_way|required_if:one_way,false|after_or_equal:departure_date',
 
                 ];
             case "POST":

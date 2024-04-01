@@ -31,6 +31,37 @@ class TripController extends ApiController
                 return $this->error('Departing flight not found', 404);
             }
 
+            if ($request->input('multi_city_trip_1'))
+            {
+                $multiCityTrip1 = Flight::where('id', $request->input('multi_city_trip_1'))
+                    ->first();
+                if (!$multiCityTrip1)
+                {
+                    return $this->error('Multi city flight 1 not found', 404);
+                }
+                $flights->push($multiCityTrip1);
+            }
+            if ($request->input('multi_city_trip_2'))
+            {
+                $multiCityTrip2 = Flight::where('id', $request->input('multi_city_trip_2'))
+                    ->first();
+                if (!$multiCityTrip2)
+                {
+                    return $this->error('Multi city flight 2 not found', 404);
+                }
+                $flights->push($multiCityTrip2);
+            }
+            if ($request->input('multi_city_trip_3'))
+            {
+                $multiCityTrip3 = Flight::where('id', $request->input('multi_city_trip_3'))
+                    ->first();
+                if (!$multiCityTrip3)
+                {
+                    return $this->error('Multi city flight 3 not found', 404);
+                }
+                $flights->push($multiCityTrip3);
+            }
+
             if ($request->input('return_flight_id'))
             {
                 $returnFlight = Flight::where('id', $request->input('return_flight_id'))

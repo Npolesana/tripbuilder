@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Flight;
+use Database\Factories\ReturnFlightFactory;
 use Illuminate\Database\Seeder;
 
 class FlightTableSeeder extends Seeder
@@ -14,7 +15,7 @@ class FlightTableSeeder extends Seeder
      */
     public function run()
     {
-        Flight::factory()->count(300)->create();
+        Flight::factory()->count(500)->create();
 
     }
 }

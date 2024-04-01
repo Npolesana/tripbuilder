@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -40,17 +41,17 @@ class Flight extends Model
     protected $dates = ['created_at', 'updated_at', 'deleted_at', 'departure_date', 'arrival_date'];
 
 
-    public function departure_airport()
+    public function departure_airport(): BelongsTo
     {
         return $this->belongsTo(Airport::class, 'departure_airport_id');
     }
 
-    public function arrival_airport()
+    public function arrival_airport(): BelongsTo
     {
         return $this->belongsTo(Airport::class, 'arrival_airport_id');
     }
 
-    public function airline()
+    public function airline(): BelongsTo
     {
         return $this->belongsTo(Airline::class, 'airline_id');
     }

@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 use Illuminate\Pagination\LengthAwarePaginator;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
-use Spatie\Fractal\Fractal;
 
 class FlightController extends ApiController
 {
@@ -21,20 +20,28 @@ class FlightController extends ApiController
                 $includes = $this->getIncludes(['departure_airport',
                     'arrival_airport',
                     'airline']);
-                $query = Flight::with($includes)
-                    ->orderBy('flights.departure_date', 'ASC');
+                $query = Flight::with($includes);
 
-                $returnQuery = Flight::with($includes)
-                ->orderBy('flights.departure_date', 'ASC');
+                $returnQuery = Flight::with($includes);
 
                 //apply filters
                 $query = $this->applyApiFilters($query, $request);
                 $returnQuery = $this->applyApiFilters($returnQuery, $request, true);
 
-                $query->union($returnQuery);
+                $query = $this->addSortToQuery($request, $query);
+                $returnQuery = $this->addSortToQuery($request, $returnQuery);
+
                 /** @var LengthAwarePaginator $paginator */
                 $paginator = $query->paginate($this->pagination_outbound['per_page_outbound'], $this->fields);
                 $paginator1 = $returnQuery->paginate($this->pagination_inbound['per_page_inbound'], $this->fields);
+
+                if ($request->input('one_way')){
+                    return fractal()
+                        ->collection($paginator->getCollection())
+                        ->transformWith(new FlightTransformer())
+                        ->paginateWith(new IlluminatePaginatorAdapter($paginator))
+                        ->parseIncludes($includes);
+                }
 
             return response()->json([
                 'outbound_flights' => fractal()

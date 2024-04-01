@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Responses\GenericJsonResponse;
+use App\Models\Airport;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -18,11 +20,20 @@ class ApiController extends Controller
      *
      * @var array
      */
-    protected array $pagination = ['per_page' => 50, 'offset' => 0, 'limit' => 1000, 'page' => 1,];
+    protected array $pagination = ['per_page' => 50,
+        'offset' => 0,
+        'limit' => 1000,
+        'page' => 1,];
 
-    protected array $pagination_inbound = ['per_page_inbound' => 50, 'offset_inbound' => 0, 'limit_inbound' => 1000, 'page_inbound' => 1,];
+    protected array $pagination_inbound = ['per_page_inbound' => 50,
+        'offset_inbound' => 0,
+        'limit_inbound' => 1000,
+        'page_inbound' => 1,];
 
-    protected array $pagination_outbound = ['per_page_outbound' => 50, 'offset_outbound' => 0, 'limit_outbound' => 1000, 'page_outbound' => 1,];
+    protected array $pagination_outbound = ['per_page_outbound' => 50,
+        'offset_outbound' => 0,
+        'limit_outbound' => 1000,
+        'page_outbound' => 1,];
 
 
     /**
@@ -192,8 +203,12 @@ class ApiController extends Controller
         $page = (int)$request->input('page', $this->pagination['page']);
         $offset = (int)($page * $perPage) - $perPage;
 
-        return [$perPage, $offset, $limit, $page];
+        return [$perPage,
+            $offset,
+            $limit,
+            $page];
     }
+
     protected function getPaginationOutbound(Request $request)
     {
         $perPage = (int)$request->input('per_page_outbound', $this->pagination_outbound['per_page_outbound']);
@@ -201,7 +216,10 @@ class ApiController extends Controller
         $page = (int)$request->input('page_outbound', $this->pagination_outbound['page_outbound']);
         $offset = (int)($page * $perPage) - $perPage;
 
-        return [$perPage, $offset, $limit, $page];
+        return [$perPage,
+            $offset,
+            $limit,
+            $page];
     }
 
     protected function getPaginationInbound(Request $request)
@@ -211,7 +229,10 @@ class ApiController extends Controller
         $page = (int)$request->input('page_inbound', $this->pagination_inbound['page_inbound']);
         $offset = (int)($page * $perPage) - $perPage;
 
-        return [$perPage, $offset, $limit, $page];
+        return [$perPage,
+            $offset,
+            $limit,
+            $page];
     }
 
     /**
@@ -222,15 +243,26 @@ class ApiController extends Controller
     private function setPagination(Request $request): void
     {
         list($perPage, $offset, $limit, $page) = $this->getPagination($request);
-        $this->pagination = ['per_page' => $perPage, 'offset' => $offset, 'limit' => $limit, 'page' => $page,];
+        $this->pagination = ['per_page' => $perPage,
+            'offset' => $offset,
+            'limit' => $limit,
+            'page' => $page,];
 
-        if ($request->input('per_page_inbound')){
-        list($perPageInbound, $offsetInbound, $limitInbound, $pageInbound) = $this->getPaginationInbound($request);
-        $this->pagination_inbound = ['per_page_inbound' => $perPageInbound, 'offset_inbound' => $offsetInbound, 'limit_inbound' => $limitInbound, 'page_inbound' => $pageInbound,];
+        if ($request->input('per_page_inbound'))
+        {
+            list($perPageInbound, $offsetInbound, $limitInbound, $pageInbound) = $this->getPaginationInbound($request);
+            $this->pagination_inbound = ['per_page_inbound' => $perPageInbound,
+                'offset_inbound' => $offsetInbound,
+                'limit_inbound' => $limitInbound,
+                'page_inbound' => $pageInbound,];
         }
-        if ($request->input('per_page_outbound')){
+        if ($request->input('per_page_outbound'))
+        {
             list($perPageOutbound, $offsetOutbound, $limitOutbound, $pageOutbound) = $this->getPaginationInbound($request);
-            $this->pagination_outbound = ['per_page_outbound' => $perPageOutbound, 'offset_inbound' => $offsetOutbound, 'limit_outbound' => $limitOutbound, 'page_outbound' => $pageOutbound,];
+            $this->pagination_outbound = ['per_page_outbound' => $perPageOutbound,
+                'offset_inbound' => $offsetOutbound,
+                'limit_outbound' => $limitOutbound,
+                'page_outbound' => $pageOutbound,];
         }
 
 
@@ -244,7 +276,8 @@ class ApiController extends Controller
     private function setFields(Request $request): void
     {
         $fields = ['*'];
-        if ($request->has('fields')) {
+        if ($request->has('fields'))
+        {
             $fields = array_values($request->input('fields'));
             $fields = explode(',', $fields[0]);
         }
@@ -260,11 +293,14 @@ class ApiController extends Controller
     private function setInclude(Request $request): void
     {
         $include = [];
-        if ($request->has('include')) {
+        if ($request->has('include'))
+        {
             $unprocessedRequestInclude = $request->input('include');
-            if (is_array($unprocessedRequestInclude)) {
+            if (is_array($unprocessedRequestInclude))
+            {
                 $include = $unprocessedRequestInclude;
-            } else {
+            } else
+            {
                 $include = explode(',', $unprocessedRequestInclude);
             }
         }
@@ -282,7 +318,8 @@ class ApiController extends Controller
     protected function getIncludes(array $overrides = []): array
     {
         $includes = array_merge($overrides, $this->include);
-        if (empty($overrides)) {
+        if (empty($overrides))
+        {
             $includes = array_merge($this->includes, $this->include);
         }
 
@@ -299,7 +336,8 @@ class ApiController extends Controller
     protected function respondOK(): void
     {
         // check if fastcgi_finish_request is callable
-        if (is_callable('fastcgi_finish_request')) {
+        if (is_callable('fastcgi_finish_request'))
+        {
             /*
              * This works in Nginx but the next approach not
              */
@@ -333,7 +371,8 @@ class ApiController extends Controller
 
         $token = PersonalAccessToken::findToken($token);
 
-        if (!$token) {
+        if (!$token)
+        {
             return null;
 
         }
@@ -356,51 +395,123 @@ class ApiController extends Controller
         return new JsonResponse($message, $code);
     }
 
-    public function applyApiFilters($query, Request $request, $isReturn = false){
+    public function applyApiFilters($query, Request $request, $isReturn = false)
+    {
 
-        if ($request->filled('airport_code')){
-            $query = $query->whereIn('airports.code', explode(",",$request->input('airport_code')));
+        if ($request->filled('airport_code'))
+        {
+            $query = $query->whereIn('airports.code', explode(",", $request->input('airport_code')));
         }
-        if ($request->filled('airport_city')){
-            $query = $query->whereIn('airports.city', explode(",",$request->input('airport_city')));
+        if ($request->filled('airport_city'))
+        {
+            $query = $query->whereIn('airports.city', explode(",", $request->input('airport_city')));
         }
         if (!$isReturn)
         {
-            if ($request->filled('departure_from'))
-            {
-                $query->join('airports AS df', 'df.id', 'departure_airport_id')
-                    ->where('df.code', $request->input('departure_from'));
+
+            $query->join('airports AS df', 'df.id', 'departure_airport_id');
+            $query->join('airports AS at', 'at.id', 'arrival_airport_id');
+
+            if ($request->input('allow_nearby_airports')){
+
+                /** @var Airport $departureAirport */
+                /** @var Airport $arrivalAirport */
+
+                $departureAirport = Airport::where('code', $request->input('departure_from'))->first();
+                $arrivalAirport = Airport::where('code', $request->input('arrival_to'))->first();
+
+
+                $query->whereBetween('df.latitude', [$departureAirport->latitude - 1, $departureAirport->latitude + 1]);
+                $query->whereBetween('df.longitude', [$departureAirport->longitude - 1, $departureAirport->longitude + 1]);
+
+                $query->whereBetween('at.latitude', [$arrivalAirport->latitude - 1, $arrivalAirport->latitude + 1]);
+                $query->whereBetween('at.longitude', [$arrivalAirport->longitude - 1, $arrivalAirport->longitude + 1]);
+
             }
-            if ($request->filled('arrival_to'))
-            {
-                $query->join('airports AS at', 'at.id', 'arrival_airport_id')
-                    ->where('at.code', $request->input('arrival_to'));
+            else{
+                $query->where('df.code', $request->input('departure_from'));
+                $query->where('at.code', $request->input('arrival_to'));
             }
+
+
+
+            $query->where('flights.departure_date', $request->input('departure_date'));
+
+            if ($request->filled('airline_code'))
+            {
+                $query->join('airlines AS airline_dep', 'airline_dep.id', 'flights.airline_id');
+                $query->where('airline_dep.code', $request->input('airline_code'));
+
+            }
+
+
             if ($request->filled('departure_date'))
             {
                 $query->where('flights.departure_date', $request->input('departure_date'));
                 $query->select('flights.*');
 
             }
-        }
-        else{
-            $query->join('airports AS return_airport_departure', 'return_airport_departure.id', 'departure_airport_id')->where('return_airport_departure.code', $request->input('arrival_to'));
-            $query->join('airports AS return_airport_arrival', 'return_airport_arrival.id', 'arrival_airport_id')->where('return_airport_arrival.code', $request->input('departure_from'));
+
+
+        } else
+        {
+            $query->join('airports AS return_airport_departure', 'return_airport_departure.id', 'departure_airport_id');
+            $query->join('airports AS return_airport_arrival', 'return_airport_arrival.id', 'arrival_airport_id');
+            if ($request->filled('airline_code'))
+            {
+                $query->join('airlines AS airline_return', 'airline_return.id', 'flights.airline_id');
+                $query->where('airline_return.code', $request->input('airline_code'));
+
+            }
+            if ($request->input('allow_nearby_airports')){
+
+                /** @var Airport $departureAirport */
+                /** @var Airport $arrivalAirport */
+
+                $departureAirport = Airport::where('code', $request->input('arrival_to'))->first();
+                $arrivalAirport = Airport::where('code', $request->input('departure_from'))->first();
+
+
+                $query->whereBetween('return_airport_departure.latitude', [$departureAirport->latitude - 1, $departureAirport->latitude + 1]);
+                $query->whereBetween('return_airport_departure.longitude', [$departureAirport->longitude - 1, $departureAirport->longitude + 1]);
+
+                $query->whereBetween('return_airport_arrival.latitude', [$arrivalAirport->latitude - 1, $arrivalAirport->latitude + 1]);
+                $query->whereBetween('return_airport_arrival.longitude', [$arrivalAirport->longitude - 1, $arrivalAirport->longitude + 1]);
+
+            }
+            else{
+                $query->where('return_airport_arrival.code', $request->input('departure_from'));
+                $query->where('return_airport_departure.code', $request->input('arrival_to'));
+            }
             $query->where('departure_date', $request->input('return_date'));
-            $query->select('flights.*');
 
 
         }
-
+        $query->select('flights.*');
 
 
         return $query;
     }
 
+    public function addSortToQuery(Request $request, Builder $query)
+    {
+        if ($request->filled("sort"))
+        {
+            $property = $request->input('sort');
+            //defaulting to
+            $direction = 'ASC';
+            $allowed = ['price',
+                'arrival_time'];
 
-
-
-
-
+            if (in_array($property, $allowed))
+            {
+                $query->orderBy($property, $direction);
+            } else
+            {
+                throw new \Exception("Not allowed to sort {$property}");
+            }
+        }
+        return $query;
+    }
 
 }
