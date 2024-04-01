@@ -1,0 +1,465 @@
+{
+	"info": {
+		"_postman_id": "9122950d-d419-46a1-a157-0bf2c7391f03",
+		"name": "Flight Builder",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18369148"
+	},
+	"item": [
+		{
+			"name": "GET Airports",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "www.polesana.it/api/v1/airports",
+					"host": [
+						"www",
+						"polesana",
+						"it"
+					],
+					"path": [
+						"api",
+						"v1",
+						"airports"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Airport",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "www.polesana.it/api/v1/airports/913",
+					"host": [
+						"www",
+						"polesana",
+						"it"
+					],
+					"path": [
+						"api",
+						"v1",
+						"airports",
+						"913"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Airlines",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "www.polesana.it/api/v1/airlines",
+					"host": [
+						"www",
+						"polesana",
+						"it"
+					],
+					"path": [
+						"api",
+						"v1",
+						"airlines"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Airline",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "www.polesana.it/api/v1/airlines/2",
+					"host": [
+						"www",
+						"polesana",
+						"it"
+					],
+					"path": [
+						"api",
+						"v1",
+						"airlines",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET One Way Flight",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "www.polesana.it/api/v1/flights?departure_from=yul&departure_date=2024-05-10&arrival_to=YYZ&one_way=1",
+					"host": [
+						"www",
+						"polesana",
+						"it"
+					],
+					"path": [
+						"api",
+						"v1",
+						"flights"
+					],
+					"query": [
+						{
+							"key": "departure_from",
+							"value": "yul"
+						},
+						{
+							"key": "departure_date",
+							"value": "2024-05-10"
+						},
+						{
+							"key": "arrival_to",
+							"value": "YYZ"
+						},
+						{
+							"key": "one_way",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Return Flight",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "www.polesana.it/api/v1/flights?departure_from=yul&departure_date=2024-05-10&arrival_to=YYZ&return_date=2024-05-11",
+					"host": [
+						"www",
+						"polesana",
+						"it"
+					],
+					"path": [
+						"api",
+						"v1",
+						"flights"
+					],
+					"query": [
+						{
+							"key": "departure_from",
+							"value": "yul"
+						},
+						{
+							"key": "departure_date",
+							"value": "2024-05-10"
+						},
+						{
+							"key": "arrival_to",
+							"value": "YYZ"
+						},
+						{
+							"key": "return_date",
+							"value": "2024-05-11"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get return Flight with airline filter",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "www.polesana.it/api/v1/flights?departure_from=yul&departure_date=2024-05-10&arrival_to=YYZ&return_date=2024-05-11&airline_code=ac",
+					"host": [
+						"www",
+						"polesana",
+						"it"
+					],
+					"path": [
+						"api",
+						"v1",
+						"flights"
+					],
+					"query": [
+						{
+							"key": "departure_from",
+							"value": "yul"
+						},
+						{
+							"key": "departure_date",
+							"value": "2024-05-10"
+						},
+						{
+							"key": "arrival_to",
+							"value": "YYZ"
+						},
+						{
+							"key": "return_date",
+							"value": "2024-05-11"
+						},
+						{
+							"key": "airline_code",
+							"value": "ac"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Return Flight with sort by arrival time",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "www.polesana.it/api/v1/flights?departure_from=yul&departure_date=2024-05-10&arrival_to=YYZ&return_date=2024-05-11&sort=arrival_time",
+					"host": [
+						"www",
+						"polesana",
+						"it"
+					],
+					"path": [
+						"api",
+						"v1",
+						"flights"
+					],
+					"query": [
+						{
+							"key": "departure_from",
+							"value": "yul"
+						},
+						{
+							"key": "departure_date",
+							"value": "2024-05-10"
+						},
+						{
+							"key": "arrival_to",
+							"value": "YYZ"
+						},
+						{
+							"key": "return_date",
+							"value": "2024-05-11"
+						},
+						{
+							"key": "sort",
+							"value": "arrival_time"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get return flight with nearby airports",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.polesana.it/api/v1/flights?departure_from=YUL&arrival_to=YYZ&return_date=2024-04-15&departure_date=2024-04-15&sort=price&allow_nearby_airports=1",
+					"protocol": "https",
+					"host": [
+						"www",
+						"polesana",
+						"it"
+					],
+					"path": [
+						"api",
+						"v1",
+						"flights"
+					],
+					"query": [
+						{
+							"key": "departure_from",
+							"value": "YUL"
+						},
+						{
+							"key": "arrival_to",
+							"value": "YYZ"
+						},
+						{
+							"key": "return_date",
+							"value": "2024-04-15"
+						},
+						{
+							"key": "departure_date",
+							"value": "2024-04-15"
+						},
+						{
+							"key": "sort",
+							"value": "price"
+						},
+						{
+							"key": "allow_nearby_airports",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Return Flight and sort by price",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "www.polesana.it/api/v1/flights?departure_from=yul&departure_date=2024-05-10&arrival_to=YYZ&return_date=2024-05-11&sort=price",
+					"host": [
+						"www",
+						"polesana",
+						"it"
+					],
+					"path": [
+						"api",
+						"v1",
+						"flights"
+					],
+					"query": [
+						{
+							"key": "departure_from",
+							"value": "yul"
+						},
+						{
+							"key": "departure_date",
+							"value": "2024-05-10"
+						},
+						{
+							"key": "arrival_to",
+							"value": "YYZ"
+						},
+						{
+							"key": "return_date",
+							"value": "2024-05-11"
+						},
+						{
+							"key": "sort",
+							"value": "price"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a one way trip",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "departure_flight_id",
+							"value": "2583",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "www.polesana.it/api/v1/trips?departure_flight_id=2583",
+					"host": [
+						"www",
+						"polesana",
+						"it"
+					],
+					"path": [
+						"api",
+						"v1",
+						"trips"
+					],
+					"query": [
+						{
+							"key": "departure_flight_id",
+							"value": "2583"
+						},
+						{
+							"key": "return_flight_id",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a return trip",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "departure_flight_id",
+							"value": "2583",
+							"type": "text"
+						},
+						{
+							"key": "return_flight_id",
+							"value": "2719",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "www.polesana.it/api/v1/trips",
+					"host": [
+						"www",
+						"polesana",
+						"it"
+					],
+					"path": [
+						"api",
+						"v1",
+						"trips"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create an open jaw trip",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "departure_flight_id",
+							"value": "1109",
+							"type": "text"
+						},
+						{
+							"key": "return_flight_id",
+							"value": "1110",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "www.polesana.it/api/v1/trips",
+					"host": [
+						"www",
+						"polesana",
+						"it"
+					],
+					"path": [
+						"api",
+						"v1",
+						"trips"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

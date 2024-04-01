@@ -64,11 +64,22 @@ class TripController extends ApiController
 
             if ($request->input('return_flight_id'))
             {
+                /** @var Flight $returnFlight */
+
                 $returnFlight = Flight::where('id', $request->input('return_flight_id'))
                     ->first();
-                if (!$returnFlight)
+                if (!$returnFlight )
                 {
                     return $this->error('Return flight not found', 404);
+                }
+                if ($returnFlight->departure_time <=  $flights[0]->arrival_time ){
+                    return $this->error('Return flight cannot be before the departure flight', 422);
+                }
+                if ($returnFlight->departure_airport_id ===  $flights[0]->departure_airport_id ){
+                    return $this->error('Return flights need to have different airports.', 422);
+                }
+                if ($returnFlight->arrival_airport_id !==  $flights[0]->departure_airport_id && sizeof($flights) == 1 ){
+                    return $this->error('Return flight needs to have the same starting destination unless multitrip', 422);
                 }
                 $flights->push($returnFlight);
             }

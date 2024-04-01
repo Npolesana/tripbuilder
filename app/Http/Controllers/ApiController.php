@@ -390,110 +390,140 @@ class ApiController extends Controller
      *
      *
      */
-    public function deleted($message, $code = Response::HTTP_NO_CONTENT)
+    public function deleted($message, $code = Response::HTTP_NO_CONTENT): JsonResponse
     {
         return new JsonResponse($message, $code);
     }
 
-    public function applyApiFilters($query, Request $request, $isReturn = false)
+    /**
+     * Apply API filters to the flight query.
+     *
+     * @param Builder $query
+     * @param Request $request
+     * @param bool $isReturn
+     * @param bool $isFlights
+     * @return Builder
+     */
+    public function applyApiFilters(Builder $query, Request $request, bool $isReturn = false, bool $isFlights = false): Builder
     {
-
-        if ($request->filled('airport_code'))
-        {
-            $query = $query->whereIn('airports.code', explode(",", $request->input('airport_code')));
+        if ($isFlights) {
+            if (!$isReturn) {
+                $query = $this->applyOutboundFilters($query, $request);
+            } else {
+                $query = $this->applyInboundFilters($query, $request);
+            }
+            $query->select('flights.*');
         }
-        if ($request->filled('airport_city'))
-        {
-            $query = $query->whereIn('airports.city', explode(",", $request->input('airport_city')));
-        }
-        if (!$isReturn)
-        {
 
-            $query->join('airports AS df', 'df.id', 'departure_airport_id');
-            $query->join('airports AS at', 'at.id', 'arrival_airport_id');
-
-            if ($request->input('allow_nearby_airports')){
-
-                /** @var Airport $departureAirport */
-                /** @var Airport $arrivalAirport */
-
-                $departureAirport = Airport::where('code', $request->input('departure_from'))->first();
-                $arrivalAirport = Airport::where('code', $request->input('arrival_to'))->first();
-
-
-                $query->whereBetween('df.latitude', [$departureAirport->latitude - 1, $departureAirport->latitude + 1]);
-                $query->whereBetween('df.longitude', [$departureAirport->longitude - 1, $departureAirport->longitude + 1]);
-
-                $query->whereBetween('at.latitude', [$arrivalAirport->latitude - 1, $arrivalAirport->latitude + 1]);
-                $query->whereBetween('at.longitude', [$arrivalAirport->longitude - 1, $arrivalAirport->longitude + 1]);
-
-            }
-            else{
-                $query->where('df.code', $request->input('departure_from'));
-                $query->where('at.code', $request->input('arrival_to'));
+        else{
+            if ($request->filled('airport_code')) {
+                $query->whereIn('airports.code', explode(",", $request->input('airport_code')));
             }
 
-
-
-            $query->where('flights.departure_date', $request->input('departure_date'));
-
-            if ($request->filled('airline_code'))
-            {
-                $query->join('airlines AS airline_dep', 'airline_dep.id', 'flights.airline_id');
-                $query->where('airline_dep.code', $request->input('airline_code'));
-
+            if ($request->filled('airport_city')) {
+                $query->whereIn('airports.city', explode(",", $request->input('airport_city')));
             }
 
-
-            if ($request->filled('departure_date'))
-            {
-                $query->where('flights.departure_date', $request->input('departure_date'));
-                $query->select('flights.*');
-
+            if ($request->input('airline_code')) {
+                $query->where('airlines.code', $request->input('airline_code'));
             }
-
-
-        } else
-        {
-            $query->join('airports AS return_airport_departure', 'return_airport_departure.id', 'departure_airport_id');
-            $query->join('airports AS return_airport_arrival', 'return_airport_arrival.id', 'arrival_airport_id');
-            if ($request->filled('airline_code'))
-            {
-                $query->join('airlines AS airline_return', 'airline_return.id', 'flights.airline_id');
-                $query->where('airline_return.code', $request->input('airline_code'));
-
-            }
-            if ($request->input('allow_nearby_airports')){
-
-                /** @var Airport $departureAirport */
-                /** @var Airport $arrivalAirport */
-
-                $departureAirport = Airport::where('code', $request->input('arrival_to'))->first();
-                $arrivalAirport = Airport::where('code', $request->input('departure_from'))->first();
-
-
-                $query->whereBetween('return_airport_departure.latitude', [$departureAirport->latitude - 1, $departureAirport->latitude + 1]);
-                $query->whereBetween('return_airport_departure.longitude', [$departureAirport->longitude - 1, $departureAirport->longitude + 1]);
-
-                $query->whereBetween('return_airport_arrival.latitude', [$arrivalAirport->latitude - 1, $arrivalAirport->latitude + 1]);
-                $query->whereBetween('return_airport_arrival.longitude', [$arrivalAirport->longitude - 1, $arrivalAirport->longitude + 1]);
-
-            }
-            else{
-                $query->where('return_airport_arrival.code', $request->input('departure_from'));
-                $query->where('return_airport_departure.code', $request->input('arrival_to'));
-            }
-            $query->where('departure_date', $request->input('return_date'));
-
 
         }
-        $query->select('flights.*');
-
 
         return $query;
     }
 
-    public function addSortToQuery(Request $request, Builder $query)
+    /**
+     * Apply outbound flight filters to the query.
+     *
+     * @param Builder $query
+     * @param Request $request
+     * @return Builder
+     */
+    private function applyOutboundFilters(Builder $query, Request $request): Builder
+    {
+        $query->join('airports AS df', 'df.id', 'departure_airport_id')
+            ->join('airports AS at', 'at.id', 'arrival_airport_id')
+            ->where('flights.departure_date', $request->input('departure_date'));
+
+        if ($request->filled('airport_code')) {
+            $query->whereIn('airports.code', explode(",", $request->input('airport_code')));
+        }
+
+        if ($request->filled('airport_city')) {
+            $query->whereIn('airports.city', explode(",", $request->input('airport_city')));
+        }
+
+        if ($request->filled('allow_nearby_airports')) {
+            $query = $this->applyNearbyAirportsFilters($query, $request, 'df', 'at');
+        } else {
+            $query->where('df.code', $request->input('departure_from'))
+                ->where('at.code', $request->input('arrival_to'));
+        }
+
+        if ($request->filled('airline_code')) {
+            $query->join('airlines AS airline_dep', 'airline_dep.id', 'flights.airline_id')
+                ->where('airline_dep.code', $request->input('airline_code'));
+        }
+
+        return $query;
+    }
+
+    /**
+     * Apply inbound flight filters to the query.
+     *
+     * @param Builder $query
+     * @param Request $request
+     * @return Builder
+     */
+    private function applyInboundFilters(Builder $query, Request $request): Builder
+    {
+        $query->join('airports AS return_airport_departure', 'return_airport_departure.id', 'departure_airport_id')
+            ->join('airports AS return_airport_arrival', 'return_airport_arrival.id', 'arrival_airport_id')
+            ->where('departure_date', $request->input('return_date'));
+
+
+        if ($request->filled('allow_nearby_airports')) {
+            $query = $this->applyNearbyAirportsFilters($query, $request, 'return_airport_departure', 'return_airport_arrival');
+        } else {
+            $query->where('return_airport_arrival.code', $request->input('departure_from'))
+                ->where('return_airport_departure.code', $request->input('arrival_to'));
+        }
+
+        if ($request->filled('airline_code')) {
+            $query->join('airlines AS airline_return', 'airline_return.id', 'flights.airline_id')
+                ->where('airline_return.code', $request->input('airline_code'));
+        }
+
+        return $query;
+    }
+
+    /**
+     * Apply filters for nearby airports.
+     *
+     * @param Builder $query
+     * @param Request $request
+     * @param string $departureAirportAlias
+     * @param string $arrivalAirportAlias
+     * @return Builder
+     */
+    private function applyNearbyAirportsFilters(Builder $query, Request $request, string $departureAirportAlias, string $arrivalAirportAlias): Builder
+    {
+        $departureAirport = Airport::where('code', $request->input('departure_from'))->first();
+        $arrivalAirport = Airport::where('code', $request->input('arrival_to'))->first();
+
+        $query->whereBetween($departureAirportAlias . '.latitude', [$departureAirport->latitude - 1, $departureAirport->latitude + 1])
+            ->whereBetween($departureAirportAlias . '.longitude', [$departureAirport->longitude - 1, $departureAirport->longitude + 1])
+            ->whereBetween($arrivalAirportAlias . '.latitude', [$arrivalAirport->latitude - 1, $arrivalAirport->latitude + 1])
+            ->whereBetween($arrivalAirportAlias . '.longitude', [$arrivalAirport->longitude - 1, $arrivalAirport->longitude + 1]);
+
+        return $query;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function addSortToQuery(Request $request, Builder $query): Builder
     {
         if ($request->filled("sort"))
         {

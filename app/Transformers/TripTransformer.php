@@ -2,6 +2,7 @@
 namespace App\Transformers;
 use App\Models\Flight;
 use App\Models\Trip;
+use Carbon\Carbon;
 use League\Fractal\Resource\Collection;
 
 class TripTransformer extends TransformerAbstract
@@ -18,8 +19,8 @@ class TripTransformer extends TransformerAbstract
     {
 
         return ['id' => $trip->id,
-            'departure_date' => $trip->departure_date,
-            'total_price' => $trip->total_price,
+            'departure_date' => Carbon::parse($trip->departure_date)->toDateString(),
+            'total_price' => round($trip->total_price, 2)
         ];
 
 

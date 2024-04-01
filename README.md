@@ -38,6 +38,8 @@ This Api calls supports open jaw trips by simply using two different flight ids 
 
 The same principle is applied to multi city trips, just adding multi_city_trip_1, multi_city_trip_2 or multi_city_trip_3 (on top of departure and arrival ids.)
 
+Provided there is a postman collection called Flight Builder.postman_collection.json with the list of available calls.
+
 
 
 
